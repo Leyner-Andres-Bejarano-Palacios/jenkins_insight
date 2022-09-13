@@ -58,7 +58,15 @@ min 1:53, new item --> add a name/*/pipeline job
 
 docker run --rm -ti -v $PWD:/usr/src --network insight_network --link sonarqube newtmitch/sonar-scanner sonar-scanner -Dsonar.host.url=http://sonarqube:9000 -Dsonar.login=3479c6e4f381a9d16a36e636969c32bc4badfd58 -Dsonar.projectKey=insight_preparation -Dsonar.projectVersion=1 -Dsonar.projectBaseDir=/usr/src -Dsonar.sources=.
 
+### step 6
 
+testing the flow library inside of container because in the linux container is not been capable of importing the flow library
+
+docker pull python:3.10-slim
+
+docker run -d python:3.10-slim tail -f /dev/null
+
+docker exec -it b14e9ea5cdf7 sh
 
 
 # In-case-I-forget
