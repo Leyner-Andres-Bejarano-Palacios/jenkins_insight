@@ -5,6 +5,12 @@
 
 As usual, for maximal portability I will be using docker, the docker image I will use is [this](https://hub.docker.com/r/jenkins/jenkins) tag jenkins/jenkins:lts-jdk11.
 
+### step 0
+
+create the docker network for connecting jenkins and sonarqueue
+
+docker network create insight_network
+
 ### step 1 
 
 1. [source](https://github.com/jenkinsci/docker/blob/master/README.md).
@@ -15,7 +21,7 @@ As usual, for maximal portability I will be using docker, the docker image I wil
 
 
 
-2. docker run --name j_insight -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts-jdk11
+2. docker run --name j_insight --network insight_network -p 8080:8080 -p 50000:50000 -v jenkins_home:/var/jenkins_home jenkins/jenkins:lts-jdk11
 
 3. what we see here is part of the log generated from the commadn above, the highlithed look important, so I taking screenshot to remember this for later
 
@@ -35,7 +41,23 @@ As usual, for maximal portability I will be using docker, the docker image I wil
 
 ### step 4
 
-min 1:53, new item --> add a name/*/pipeline job 
+min 1:53, new item --> add a name/*/pipeline job
+
+### step 5
+
+- get the sonarqueue server running with this command:
+1.  docker run --name sonarqube \
+    -p 9000:9000 \
+    -v "$(pwd)/sonarqube_data":/opt/sonarqube/data \
+    -v "$(pwd)/sonarqube_extensions":/opt/sonarqube/extensions \
+    -v "$(pwd)/sonarqube_logs":/opt/sonarqube/logs \
+    --network insight_network \
+    -d sonarqube
+
+
+
+docker run --rm -ti -v $PWD:/usr/src --network insight_network --link sonarqube newtmitch/sonar-scanner sonar-scanner -Dsonar.host.url=http://sonarqube:9000 -Dsonar.login=3479c6e4f381a9d16a36e636969c32bc4badfd58 -Dsonar.projectKey=insight_preparation -Dsonar.projectVersion=1 -Dsonar.projectBaseDir=/usr/src -Dsonar.sources=.
+
 
 
 
